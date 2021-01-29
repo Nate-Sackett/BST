@@ -25,11 +25,11 @@ class BST {
     }
 
     /**
-     * Pushes a BST node to the BST.
+     * Add a BST node to the BST.
      * @param {BST} node The BST node to be added.
      * @throws Error when node isn't a BST node or node.value isn't a unique number.
      */
-    push(node) {
+    add(node) {
         // Type validation (node must be a BST node)
         if ( node !== null && node !== undefined && !node.hasOwnProperty("key") && typeof node.key === "number" 
         && !node.hasOwnProperty("value") && !node.hasOwnProperty("left") && !node.hasOwnProperty("right") ) {
@@ -49,7 +49,7 @@ class BST {
 
             // Recursive case
             else
-                this.left.push(node);
+                this.left.add(node);
 
         }
         // Right child
@@ -61,7 +61,7 @@ class BST {
             
             // Recursive case
             else
-                this.right.push(node);
+                this.right.add(node);
         }
     }
 
@@ -97,37 +97,6 @@ class BST {
     }
 
     /**
-     * Outputs sorted BST of key value pairs as an array of objects.
-     * - Sorted from smallest to largest key value.
-     * @example (BST) root.toKVArray := [ { key: 4, value: 'val_4' }, { key: 5, value: 'val_5' } ]
-     * @returns Sorted array of key/value objects
-     */
-    toKVArray() {
-        let arr = [];
-
-        // Recursive helper function
-        function toKVArrayHelper(curr) {
-
-            // Evaluate left child first
-            if (curr.left !== null)
-                toKVArrayHelper(curr.left);
-            
-            // Push self once left child fully evaluated
-            arr.push({key: curr.key, value: curr.value});
-    
-            // Evaluate right child after self
-            if (curr.right !== null)
-                toKVArrayHelper(curr.right);
-        }
-
-        // Call (private) recursive helper function
-        toKVArrayHelper(this);
-
-        // Return array of key, value pair objects
-        return arr;
-    }
-
-    /**
      * Outputs sorted array of BST values (only)
      * - Array sorted from smallest to largest key value
      * @example (BST) root.toArray := [ 'val_4', 'val_5' ]
@@ -155,6 +124,37 @@ class BST {
         toArrayHelper(this);
 
         // Return sorted array of values
+        return arr;
+    }
+
+    /**
+     * Outputs sorted BST of key value pairs as an array of objects.
+     * - Sorted from smallest to largest key value.
+     * @example (BST) root.toKVArray := [ { key: 4, value: 'val_4' }, { key: 5, value: 'val_5' } ]
+     * @returns Sorted array of key/value objects
+     */
+    toKVArray() {
+        let arr = [];
+
+        // Recursive helper function
+        function toKVArrayHelper(curr) {
+
+            // Evaluate left child first
+            if (curr.left !== null)
+                toKVArrayHelper(curr.left);
+            
+            // Push self once left child fully evaluated
+            arr.push({key: curr.key, value: curr.value});
+    
+            // Evaluate right child after self
+            if (curr.right !== null)
+                toKVArrayHelper(curr.right);
+        }
+
+        // Call (private) recursive helper function
+        toKVArrayHelper(this);
+
+        // Return array of key, value pair objects
         return arr;
     }
 
