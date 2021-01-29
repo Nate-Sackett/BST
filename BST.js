@@ -157,6 +157,36 @@ class BST {
         // Return sorted array of values
         return arr;
     }
+
+    /**
+     * Outputs sorted array of all BST keys
+     * @example (BST) root.getKeys := [ 4, 5 ]
+     * @returns Sorted array of BST keys
+     */
+    getKeys() {
+        let arr = [];
+
+        // Recursive helper function
+        function getKeyHelper(curr) {
+
+            // Evaluate left child first
+            if (curr.left !== null)
+                getKeyHelper(curr.left);
+            
+            // Push self once left child fully evaluated
+            arr.push(curr.key);
+    
+            // Evaluate right child after self
+            if (curr.right !== null)
+                getKeyHelper(curr.right);
+        }
+
+        // Call (private) recursive helper function
+        getKeyHelper(this);
+
+        // Return array of key, value pair objects
+        return arr;
+    }
 }
 
 module.exports = BST;
