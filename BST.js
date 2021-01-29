@@ -12,58 +12,69 @@ class BST {
      * @param {*} value The value for this BST node; null if unspecified
      */
     constructor(key, value=null) {
+        // TODO: Be able to change value
 
         // Type validation (number only)
-        if (typeof key === "number") {
-            this.key = key;
-            this.value = value;
-            this.left = null;
-            this.right = null;
-        } else {
+        if (typeof key !== "number")
             throw new Error("Key of BST node must be a number!");
-        }
+            
+        this.key = key;
+        this.value = value;
+        this.left = null;
+        this.right = null;
     }
 
+
     /**
-     * Add a BST node to the BST.
+     * Iteratively add a BST node to the BST.
      * @param {BST} node The BST node to be added.
      * @throws Error when node isn't a BST node or node.value isn't a unique number.
      */
     add(node) {
-        // Type validation (node must be a BST node)
+        // Input type validation (node must be a BST node)
         if ( node !== null && node !== undefined && !node.hasOwnProperty("key") && typeof node.key === "number" 
         && !node.hasOwnProperty("value") && !node.hasOwnProperty("left") && !node.hasOwnProperty("right") ) {
             throw new Error("Only valid for BST nodes.");
         }
 
-        // Check that the key is unique
-        if (this.key === node.key)
-            throw new Error(node.key + " is not a unique key.");
+        let curr = this; // Current location in BST; start from root
+        let done = false;
 
-        // Left child
-        if (node.key < this.key) {
+        while(!done) {
 
-            // Try adding as left child (base case = no left child)
-            if (this.left === null)
-                this.left = node;
+            // Check that the key is unique
+            if (curr.key === node.key)
+                throw new Error(`${node.key} is not a unique key.`);
 
-            // Recursive case
-            else
-                this.left.add(node);
+            // Left child
+            if (node.key < curr.key) {
 
-        }
-        // Right child
-        else { // (this.key < node.key)
+                // Try adding as left child
+                if (curr.left === null) {
+                    curr.left = node;
+                    done = true;
+                }
 
-            // Try adding as right child (base case = no right child)
-            if (this.right === null)
-                this.right = node;
-            
-            // Recursive case
-            else
-                this.right.add(node);
+                // Else, iterate left
+                else
+                    curr = curr.left;
+            }
+            // Right child
+            else { // (curr.key < node.key)
+
+                // Try adding as right child
+                if (curr.right === null) {
+                    curr.right = node;
+                    done = true;
+                }
+                
+                // Else, iterate right
+                else
+                    curr = curr.right;
+            }
         }
     }
+
 
     // TODO: Test and make it look better
     delete(key) {
@@ -177,6 +188,7 @@ class BST {
         return { key: curr.key, value: curr.value };
     }
 
+
     /**
      * Finds and returns a value from the BST, given the matching key.
      * @param {number} key The key matching the desired value.
@@ -207,6 +219,7 @@ class BST {
             return this.right.getValue(key);
         }
     }
+
 
     /**
      * Outputs sorted array of BST values (only)
@@ -239,6 +252,7 @@ class BST {
         return arr;
     }
 
+
     /**
      * Outputs sorted BST of key value pairs as an array of objects.
      * - Sorted from smallest to largest key value.
@@ -269,6 +283,7 @@ class BST {
         // Return array of key, value pair objects
         return arr;
     }
+
 
     /**
      * Outputs sorted array of all BST keys
