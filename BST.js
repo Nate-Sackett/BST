@@ -64,6 +64,37 @@ class BST {
                 this.right.push(node);
         }
     }
+
+    /**
+     * Finds and returns a value from the BST, given the matching key.
+     * @param {number} key The key matching the desired value.
+     * @returns Value of matching key or undefined if the key DNE.
+     */
+    getValue(key) {
+
+        // Base case
+        if (this.key === key)
+            return this.value;
+        
+        // Iterate left
+        else if (key < this.key) {
+
+            // Check for valid left child
+            if (this.left === null)
+                return undefined;
+
+            return this.left.getValue(key);
+
+        // Iterate right
+        } else { // this.key < key
+
+            // Check for valid right child
+            if (this.right === null)
+                return undefined;
+            
+            return this.right.getValue(key);
+        }
+    }
 }
 
 module.exports = BST;
