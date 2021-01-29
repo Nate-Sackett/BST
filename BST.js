@@ -65,6 +65,118 @@ class BST {
         }
     }
 
+    // TODO: Test and make it look better
+    delete(key) {
+        // Input validation
+        if (typeof key !== "number")
+            throw new Error("Key of BST node must be a number!");
+
+        let prev; // Previous node -> Parent of matching node
+        let curr = this; // Current node -> Matching node
+
+        // ----- Find node with matching key and its parent -----
+        while (curr.key !== key) {
+
+            // Update prev
+            prev = curr;
+            
+            // Iterate left
+            if (key < prev.key) {
+
+                // End if no matches
+                if (prev.left === null)
+                    return null;
+                
+                else
+                    curr = prev.left;
+            }
+
+            // Iterate right
+            else { // prev.key < key
+
+                // End if no matches
+                if (prev.right === null)
+                    return null;
+
+                else
+                    curr = prev.right;
+            }
+        }
+        // ----- Find successor node then update pointers -----
+
+        // Case 1: curr < prev
+        if (curr.key < prev.key) {
+
+            // Case 1A: curr.left is null
+            if (curr.left === null)
+                prev.left = curr.right; // Possible for this to be null
+
+            // Case 1B: curr.right is null
+            else if (curr.right === null)
+                prev.left = curr.left; // May overwrite null with null
+
+            // Case 1C: Neither curr.left nor curr.right are null
+            else {
+                // Find the child just larger and its parent
+                let parent = curr;
+                let child = curr.right;
+                while (child.left !== null) {
+                    parent = child;
+                    child = child.left;
+                }
+                console.log(`parent: ${parent.value}, child: ${child.value}`);
+                // -- Update references --
+
+                // Extract child (child.left === null)
+                parent.left = child.right;
+
+                // Attach child to curr's children
+                child.left = curr.left;
+                child.right = curr.right;
+
+                // Attach prev to child
+                prev.left = child;
+            }
+        }    
+        // Case 2: prev < curr
+        else {
+    
+            // Case 2A: curr.left is null
+            if (curr.left === null)
+                prev.right = curr.right; // Possible for this to be null
+
+            // Case 2B: curr.right is null
+            else if (curr.right === null)
+                prev.right = curr.left; // May overwrite null with null
+
+            // Case 1C: Neither curr.left nor curr.right are null
+            else {
+                // Find the child just larger and its parent
+                let parent = curr;
+                let child = curr.right;
+                while (child.left !== null) {
+                    parent = child;
+                    child = child.left;
+                }
+                console.log(`parent: ${parent.value}, child: ${child.value}`);
+                // -- Update references --
+
+                // Extract child (child.left === null)
+                parent.left = child.right;
+
+                // Attach child to curr's children
+                child.left = curr.left;
+                child.right = curr.right;
+
+                // Attach prev to child
+                prev.right = child;
+            }
+        }
+
+        // ----- Finally return key/value pair in an object -----
+        return { key: curr.key, value: curr.value };
+    }
+
     /**
      * Finds and returns a value from the BST, given the matching key.
      * @param {number} key The key matching the desired value.
