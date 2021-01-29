@@ -95,6 +95,37 @@ class BST {
             return this.right.getValue(key);
         }
     }
+
+    /**
+     * Outputs sorted BST of key value pairs as an array of objects.
+     * - Sorted from smallest to largest key value.
+     * @example (BST) root.toKVArray := [ { key: 4, value: 'val_4' }, { key: 5, value: 'val_5' } ]
+     * @returns Sorted array of key/value objects
+     */
+    toKVArray() {
+        let arr = [];
+
+        // Recursive helper function
+        function toKVArrayHelper(curr) {
+
+            // Evaluate left child first
+            if (curr.left !== null)
+                toKVArrayHelper(curr.left);
+            
+            // Push self once left child fully evaluated
+            arr.push({key: curr.key, value: curr.value});
+    
+            // Evaluate right child after self
+            if (curr.right !== null)
+                toKVArrayHelper(curr.right);
+        }
+
+        // Call (private) recursive helper function
+        toKVArrayHelper(this);
+
+        // Return array of key, value pair objects
+        return arr;
+    }
 }
 
 module.exports = BST;
