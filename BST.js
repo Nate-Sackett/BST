@@ -126,6 +126,37 @@ class BST {
         // Return array of key, value pair objects
         return arr;
     }
+
+    /**
+     * Outputs sorted array of BST values (only)
+     * - Array sorted from smallest to largest key value
+     * @example (BST) root.toArray := [ 'val_4', 'val_5' ]
+     * @returns Sorted array of BST values
+     */
+    toArray() {
+        let arr = [];
+
+        // Recursive helper function
+        function toArrayHelper(curr) {
+
+            // Evaluate left child first
+            if (curr.left !== null)
+                toArrayHelper(curr.left);
+            
+            // Push self once left child fully evaluated
+            arr.push(curr.value);
+    
+            // Evaluate right child after self
+            if (curr.right !== null)
+                toArrayHelper(curr.right);
+        }
+
+        // Call (private) recursive helper function
+        toArrayHelper(this);
+
+        // Return sorted array of values
+        return arr;
+    }
 }
 
 module.exports = BST;
