@@ -188,7 +188,7 @@ class BST {
         return { key: curr.key, value: curr.value };
     }
 
-
+    
     /**
      * Finds and returns a value from the BST, given the matching key.
      * @param {number} key The key matching the desired value.
@@ -196,28 +196,36 @@ class BST {
      */
     getValue(key) {
 
-        // Base case
-        if (this.key === key)
-            return this.value;
-        
-        // Iterate left
-        else if (key < this.key) {
+        // Reference to the current node in the BST
+        let curr = this;
 
-            // Check for valid left child
-            if (this.left === null)
-                return undefined;
+        // Loop until a match is found or DNE
+        while(curr.key !== key) {
 
-            return this.left.getValue(key);
-
-        // Iterate right
-        } else { // this.key < key
-
-            // Check for valid right child
-            if (this.right === null)
-                return undefined;
-            
-            return this.right.getValue(key);
+            // Try to iterate left
+            if (key < curr.key) {
+    
+                // Check for valid left child (exit condition)
+                if (curr.left === null)
+                    return undefined;
+    
+                // Iterate left
+                curr = curr.left;
+    
+            // Try to iterate right
+            } else { // curr.key < key
+    
+                // Check for valid right child (exit condition)
+                if (curr.right === null)
+                    return undefined;
+                
+                // Iterate right
+                curr = curr.right;
+            }
         }
+
+        // Return matching key after finding match
+        return curr.value;
     }
 
 
