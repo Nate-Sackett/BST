@@ -224,8 +224,50 @@ class BST {
             }
         }
 
-        // Return matching key after finding match
+        // Return value from matching key
         return curr.value;
+    }
+
+
+    /**
+     * Finds and updates a value from the BST, given the matching key.
+     * @param {number} key The key matching the node to be updated.
+     * @returns The old value of the node, or undefined if the key was not found.
+     */
+    update(key, newValue) {
+
+        // Reference to the current node in the BST
+        let curr = this;
+
+        // Loop until a match is found or DNE
+        while(curr.key !== key) {
+
+            // Try to iterate left
+            if (key < curr.key) {
+    
+                // Check for valid left child (exit condition)
+                if (curr.left === null)
+                    return undefined;
+    
+                // Iterate left
+                curr = curr.left;
+    
+            // Try to iterate right
+            } else { // curr.key < key
+    
+                // Check for valid right child (exit condition)
+                if (curr.right === null)
+                    return undefined;
+                
+                // Iterate right
+                curr = curr.right;
+            }
+        }
+
+        // Return matching key after finding match
+        const temp = curr.value;
+        curr.value = newValue;
+        return temp;
     }
 
 
