@@ -1,5 +1,6 @@
 /**
  * Basic (non self-balancing) recursive implementation of a Binary Search Tree with CRUD features
+ * @author Nate Sackett
  */
 class BST {
     /**
@@ -12,7 +13,6 @@ class BST {
      * @param {*} value The value for this BST node; null if unspecified
      */
     constructor(key, value=null) {
-        // TODO: Be able to change value
 
         // Type validation (number only)
         if (typeof key !== "number")
