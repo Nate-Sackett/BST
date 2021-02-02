@@ -76,116 +76,123 @@ class BST {
     }
 
 
-    // TODO: Test and make it look better
+    /**
+     * Deletes a BST node given a valid key, then returns the key and value inside an object.
+     * Does nothing and returns null given an invalid (numerical) key.
+     * @param {number} key The key of the BST node to be deleted.
+     * @throws Error ("Key of BST node must be a number!") when provided a key that is not a number.
+     * @example root.delete(5); // If successful, returns: { key: 5, value: {associated value} }, else returns: null
+     * @returns key/value pair inside an object if node removed, or null if node does not exist.
+     */
     delete(key) {
         // Input validation
         if (typeof key !== "number")
             throw new Error("Key of BST node must be a number!");
 
-        let prev; // Previous node -> Parent of matching node
-        let curr = this; // Current node -> Matching node
+        let matchParent; // Parent of current matching node
+        let match = this; // Current matching node
 
         // ----- Find node with matching key and its parent -----
-        while (curr.key !== key) {
+        while (match.key !== key) {
 
-            // Update prev
-            prev = curr;
+            // Update parent of match
+            matchParent = match;
             
             // Iterate left
-            if (key < prev.key) {
+            if (key < matchParent.key) {
 
                 // End if no matches
-                if (prev.left === null)
+                if (matchParent.left === null)
                     return null;
                 
                 else
-                    curr = prev.left;
+                    match = matchParent.left;
             }
 
             // Iterate right
-            else { // prev.key < key
+            else { // matchParent.key < key
 
                 // End if no matches
-                if (prev.right === null)
+                if (matchParent.right === null)
                     return null;
 
                 else
-                    curr = prev.right;
+                    match = matchParent.right;
             }
         }
-        // ----- Find successor node then update pointers -----
+        // ----- Find in-order successor node and its parent, then update pointers -----
 
-        // Case 1: curr < prev
-        if (curr.key < prev.key) {
+        // Case 1: match < matchParent
+        if (match.key < matchParent.key) {
 
-            // Case 1A: curr.left is null
-            if (curr.left === null)
-                prev.left = curr.right; // Possible for this to be null
+            // Case 1A: match.left is null
+            if (match.left === null)
+                matchParent.left = match.right; // Possible (and okay) for this to be null
 
-            // Case 1B: curr.right is null
-            else if (curr.right === null)
-                prev.left = curr.left; // May overwrite null with null
+            // Case 1B: match.right is null
+            else if (match.right === null)
+                matchParent.left = match.left; // Possible (and okay) for this to be null
 
-            // Case 1C: Neither curr.left nor curr.right are null
+            // Case 1C: Neither match.left nor match.right are null
             else {
-                // Find the child just larger and its parent
-                let parent = curr;
-                let child = curr.right;
-                while (child.left !== null) {
-                    parent = child;
-                    child = child.left;
+                // Find in-order successor and its parent
+                let successorParent = match;
+                let successor = match.right; // successor > match
+                while (successor.left !== null) {
+                    successorParent = successor;
+                    successor = successor.left;
                 }
-                console.log(`parent: ${parent.value}, child: ${child.value}`);
+                
                 // -- Update references --
 
-                // Extract child (child.left === null)
-                parent.left = child.right;
+                // Extract successor (note: successor.left === null)
+                successorParent.left = successor.right;
 
-                // Attach child to curr's children
-                child.left = curr.left;
-                child.right = curr.right;
+                // Attach successor to match's children
+                successor.left = match.left;
+                successor.right = match.right;
 
-                // Attach prev to child
-                prev.left = child;
+                // Attach matchParent to successor
+                matchParent.left = successor;
             }
         }    
-        // Case 2: prev < curr
+        // Case 2: matchParent < match
         else {
     
-            // Case 2A: curr.left is null
-            if (curr.left === null)
-                prev.right = curr.right; // Possible for this to be null
+            // Case 2A: match.left is null
+            if (match.left === null)
+                matchParent.right = match.right; // Possible (and okay) for this to be null
 
-            // Case 2B: curr.right is null
-            else if (curr.right === null)
-                prev.right = curr.left; // May overwrite null with null
+            // Case 2B: match.right is null
+            else if (match.right === null)
+                matchParent.right = match.left; // Possible (and okay) for this to be null
 
-            // Case 1C: Neither curr.left nor curr.right are null
+            // Case 1C: Neither match.left nor match.right are null
             else {
-                // Find the child just larger and its parent
-                let parent = curr;
-                let child = curr.right;
-                while (child.left !== null) {
-                    parent = child;
-                    child = child.left;
+                // Find the successor just larger and its parent
+                let successorParent = match;
+                let successor = match.right;
+                while (successor.left !== null) {
+                    successorParent = successor;
+                    successor = successor.left;
                 }
-                console.log(`parent: ${parent.value}, child: ${child.value}`);
+
                 // -- Update references --
 
-                // Extract child (child.left === null)
-                parent.left = child.right;
+                // Extract successor (note: successor.left === null)
+                successorParent.right = successor.right;
 
-                // Attach child to curr's children
-                child.left = curr.left;
-                child.right = curr.right;
+                // Attach successor to match's children
+                successor.left = match.left;
+                successor.right = match.right;
 
-                // Attach prev to child
-                prev.right = child;
+                // Attach matchParent to successor
+                matchParent.right = successor;
             }
         }
 
         // ----- Finally return key/value pair in an object -----
-        return { key: curr.key, value: curr.value };
+        return { key: match.key, value: match.value };
     }
 
     
