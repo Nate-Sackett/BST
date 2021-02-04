@@ -1,5 +1,5 @@
 /**
- * Basic (not self-balancing) recursive implementation of a Binary Search Tree
+ * Basic (not self-balancing) implementation of a Binary Search Tree
  * @author Nate Sackett
  */
 module.exports = class BST {
@@ -32,8 +32,8 @@ module.exports = class BST {
      */
     add(node) {
         // Input type validation (node must be a BST node)
-        if ( node !== null && node !== undefined && !node.hasOwnProperty("key") && typeof node.key === "number" 
-        && !node.hasOwnProperty("value") && !node.hasOwnProperty("left") && !node.hasOwnProperty("right") ) {
+        if ( node === null || node === undefined || !node.hasOwnProperty("key") || typeof node.key !== "number" 
+        || !node.hasOwnProperty("value") || !node.hasOwnProperty("left") || !node.hasOwnProperty("right") ) {
             throw new Error("Only valid for BST nodes.");
         }
 
@@ -83,6 +83,10 @@ module.exports = class BST {
      */
     getValue(key) {
 
+        // Type validation (number only)
+        if (typeof key !== "number")
+            throw new Error("Key of BST node must be a number!");
+
         // Reference to the current node in the BST
         let curr = this;
 
@@ -122,6 +126,10 @@ module.exports = class BST {
      * @returns The old value of the node, or undefined if the key was not found.
      */
     update(key, newValue) {
+
+        // Type validation (number only)
+        if (typeof key !== "number")
+            throw new Error("Key of BST node must be a number!");
 
         // Reference to the current node in the BST
         let curr = this;
