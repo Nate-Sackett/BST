@@ -307,73 +307,38 @@ module.exports = class BST {
         }
         // ----- Find in-order successor node and its parent, then update pointers -----
 
-        // Case 1: match < matchParent
-        if (match.key < matchParent.key) {
+        // Find relation between match and matchParent (i.e. Is match equal to matchParent.left or matchParent.right?)
+        const relation = match.key < matchParent.key ? "left" : "right";
 
-            // Case 1A: match.left is null
-            if (match.left === null)
-                matchParent.left = match.right; // Possible (and okay) for this to be null
+        // Case 1: match.left is null
+        if (match.left === null)
+            matchParent.left = match.right; // Also accounts for both being null
 
-            // Case 1B: match.right is null
-            else if (match.right === null)
-                matchParent.left = match.left; // Possible (and okay) for this to be null
+        // Case 2: match.right is null
+        else if (match.right === null)
+            matchParent.left = match.left;
 
-            // Case 1C: Neither match.left nor match.right are null
-            else {
-                // Find in-order successor and its parent
-                let successorParent = match;
-                let successor = match.right; // successor > match
-                while (successor.left !== null) {
-                    successorParent = successor;
-                    successor = successor.left;
-                }
-                
-                // -- Update references --
-
-                // Extract successor (note: successor.left === null)
-                successorParent.left = successor.right;
-
-                // Attach successor to match's children
-                successor.left = match.left;
-                successor.right = match.right;
-
-                // Attach matchParent to successor
-                matchParent.left = successor;
-            }
-        }    
-        // Case 2: matchParent < match
+        // Case 3: Neither match.left nor match.right are null
         else {
-    
-            // Case 2A: match.left is null
-            if (match.left === null)
-                matchParent.right = match.right; // Possible (and okay) for this to be null
-
-            // Case 2B: match.right is null
-            else if (match.right === null)
-                matchParent.right = match.left; // Possible (and okay) for this to be null
-
-            // Case 1C: Neither match.left nor match.right are null
-            else {
-                // Find the successor just larger and its parent
-                let successorParent = match;
-                let successor = match.right;
-                while (successor.left !== null) {
-                    successorParent = successor;
-                    successor = successor.left;
-                }
-
-                // -- Update references --
-
-                // Extract successor (note: successor.left === null)
-                successorParent.right = successor.right;
-
-                // Attach successor to match's children
-                successor.left = match.left;
-                successor.right = match.right;
-
-                // Attach matchParent to successor
-                matchParent.right = successor;
+            // Find in-order successor and its parent
+            let successorParent = match;
+            let successor = match.right; // successor > match
+            while (successor.left !== null) {
+                successorParent = successor;
+                successor = successor.left;
             }
+            
+            // -- Update references --
+
+            // Extract successor (note: successor.left === null)
+            successorParent[relation] = successor.right;
+
+            // Attach successor to match's children
+            successor.left = match.left;
+            successor.right = match.right;
+
+            // Attach matchParent to successor
+            matchParent[relation] = successor;
         }
 
         // ----- Finally return key/value pair in an object -----
