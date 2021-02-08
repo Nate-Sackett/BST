@@ -266,6 +266,7 @@ module.exports = class BST {
      * Does nothing and returns null given an invalid (numerical) key.
      * @param {number} key The key of the BST node to be deleted.
      * @throws Error ("Key of BST node must be a number!") when provided a key that is not a number.
+     * @throws Error ("Deleting root node when no other nodes exist is undefined.") when attempting to delete root node with zero children
      * @returns key/value pair inside an object if node removed, or null if node does not exist.
      * @example root.delete(5); // If successful, returns: { key: 5, value: {associated value} }, else returns: null
      */
@@ -274,75 +275,104 @@ module.exports = class BST {
         if (typeof key !== "number")
             throw new Error("Key of BST node must be a number!");
 
-        let matchParent; // Parent of current matching node
+        let matchParent = null; // Parent of current matching node
         let match = this; // Current matching node
 
         // ----- Find node with matching key and its parent -----
-        while (match.key !== key) {
+        try {
+            while (match.key !== key) {
 
-            // Update parent of match
-            matchParent = match;
-            
-            // Iterate left
-            if (key < matchParent.key) {
-
-                // End if no matches
-                if (matchParent.left === null)
-                    return null;
+                // Update parent of match
+                matchParent = match;
                 
-                else
+                // Iterate left
+                if (key < matchParent.key)
                     match = matchParent.left;
-            }
 
-            // Iterate right
-            else { // matchParent.key < key
-
-                // End if no matches
-                if (matchParent.right === null)
-                    return null;
-
-                else
+                // Iterate right
+                else // matchParent.key < key
                     match = matchParent.right;
             }
+        // Catches reference to null.left or null.right if no match is found
+        } catch (err) {
+            return null;
         }
-        // ----- Find in-order successor node and its parent, then update pointers -----
 
-        // Find relation between match and matchParent (i.e. Is match equal to matchParent.left or matchParent.right?)
-        const relation = match.key < matchParent.key ? "left" : "right";
+        // ----- Find in-order successor to match, swap in the successor, and remove match
 
-        // Case 1: match.left is null
-        if (match.left === null)
-            matchParent.left = match.right; // Also accounts for both being null
+        // Variable to hold the old value of the match before it's overwritten
+        let matchData;
+        
+        // Case 1: At least one child of match is null
+        if ( match.left===null || match.right===null ) {
+            
+            // Find successor node to replace match
+            let successor = match.left===null ? match.right : match.left; // Yields null if both children are null
+            
+            // Special case: match is the root node (this)
+            // - Because one or fewer children exist, match can be directly transformed into successor, thus removing the root from the BST
+            if (matchParent === null) { // match === this
 
-        // Case 2: match.right is null
-        else if (match.right === null)
-            matchParent.left = match.left;
+                // Cannot delete root node if no other nodes exist
+                if (successor == null)
+                    throw new Error("Deleting root node when no other nodes exist is undefined.");
 
-        // Case 3: Neither match.left nor match.right are null
+                // Remove root node from tree by transforming it into its successor
+                match.key = successor.key;
+                match.value = successor.value;
+                match.left = successor.left;
+                match.right = successor.right;
+            }
+            
+            // Otherwise, remove match from the BST normally by dereferencing it
+            else {
+                // Find relation between match and matchParent (i.e. Is match equal to matchParent.left or matchParent.right?)
+                const relation = match.key < matchParent.key ? "left" : "right";
+
+                matchParent[relation] = successor;
+            }
+            // Store return value from match
+            matchData = { key: match.key, value: match.value };
+        }
+        
+        // Case 2: Neither child of match are null
         else {
+
             // Find in-order successor and its parent
-            let successorParent = match;
-            let successor = match.right; // successor > match
+            let successorParent = null;
+            let successor = match.right; // successor.key > match.key
             while (successor.left !== null) {
                 successorParent = successor;
                 successor = successor.left;
             }
             
-            // -- Update references --
+            // -- Update data --
+            
+            // Store values from match before updating/deleting
+            matchData = { key: match.key, value: match.value };
+            
+            // Special case: successor is the direct child of match
+            if (successorParent === null) { // match.right === successor
 
-            // Extract successor (note: successor.left === null)
-            successorParent[relation] = successor.right;
+                // Transform match into successor, dereferencing successor
+                // - (will update key and value of match to those of successor later)
+                match.right = successor.right;
+            }
 
-            // Attach successor to match's children
-            successor.left = match.left;
-            successor.right = match.right;
+            // Regular case: successor isn't the direct child of match
+            else { // successorParent !== null
 
-            // Attach matchParent to successor
-            matchParent[relation] = successor;
+                // Remove reference to successor from its parent
+                successorParent.left = successor.right;
+            }
+
+            // Replace match's key and value with those from successor
+            match.key = successor.key;
+            match.value = successor.value;
         }
 
         // ----- Finally return key/value pair in an object -----
-        return { key: match.key, value: match.value };
+        return matchData;
     }
 
     
